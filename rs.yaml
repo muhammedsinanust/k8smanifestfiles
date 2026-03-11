@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+  name: ey-cart-rs
+  namespace: sinan-ns
+  labels:
+    app: cart
+spec: # defines the desired state of the ReplicaSet
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template: # it contains pod definition
+    metadata:
+      labels:
+        app: web
+    spec: # container definition
+      containers:
+        - name: ey-cart-container
+          image: muralisocial123/ey-cart:v1.1.0
+          ports:
+            - containerPort: 3000
