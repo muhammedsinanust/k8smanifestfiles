@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ey-deployment
+  namespace: sinan-ns
+  labels:
+    app: ey-cart
+spec: # deployment definition
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ey-cart
+  template: # pod definition
+    metadata:
+      labels:
+        app: ey-cart
+    spec: # container definition
+      containers:
+      - name: ey-cart-container
+        image: muralisocial123/flipkart-app-web:v1.1.0
+        ports:
+        - containerPort: 80
