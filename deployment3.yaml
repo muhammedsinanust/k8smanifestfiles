@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ey-cart-deployment
+  namespace: sinan-ns
+  labels:
+    app: ey-cart
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: ey-cart
+  template:
+    metadata:
+      labels:
+        app: ey-cart
+    spec:
+      containers:
+      - name: ey-cart-container
+        image: muralisocial123/ey-cart:v1.1.0
+        ports:
+        - containerPort: 3000
