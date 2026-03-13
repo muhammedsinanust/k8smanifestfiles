@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fitness-app-deployment
+  namespace: sinan-ns
+  labels:
+    app: fitness-app
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: fitness-app
+  template:
+    metadata:
+      labels:
+        app: fitness-app
+    spec:
+      containers:
+      - name: fitness-app-container
+        image: muralisocial123/fitness-app:v1.0.1
+        ports:
+        - containerPort: 3000
