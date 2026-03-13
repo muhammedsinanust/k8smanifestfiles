@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fitness-app-service
+  namespace: sinan-ns
+  labels:
+    app: fitness-app
+spec:
+  selector:
+    app: fitness-app
+  ports:
+    - port: 3001 # service port number, service will listen on
+      targetPort: 3000 # container port, service will forward traffic to this port on the pod
+      protocol: TCP
+  type: ClusterIP
