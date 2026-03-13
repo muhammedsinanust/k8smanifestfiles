@@ -12,5 +12,5 @@ spec:
     - port: 3001 # service port number, service will listen on
       targetPort: 3000 # container port, service will forward traffic to this port on the pod
       protocol: TCP
-#   type: ClusterIP
   type: NodePort
+#   type: ClusterIP
