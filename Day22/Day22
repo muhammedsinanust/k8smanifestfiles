@@ -1,0 +1,43 @@
+MetalLB
+-------
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.3/config/manifests/metallb-native.yaml
+kubectl get pods -n metallb-system
+vi metallb-config.yaml
+----------------------
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: ec2-ip-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 172.31.1.50-172.31.1.100
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: ec2-l2
+  namespace: metallb-system
+----------------------
+kubectl apply -f metallb-config.yaml
+kubectl get svc -n metallb-system
+kubectl get endpoints -n metallb-system metallb-webhook-service
+kubectl get svc -n metallb-system
+kubectl delete validatingwebhookconfiguration metallb-webhook-configuration
+vi deployment.yaml
+### make service type LoadBalancer in spec
+kubectl apply -f deployment.yaml
+kubectl get all -o wide -n photo-ns
+kubectl run test --rm -it --image=busybox -- sh
+
+
+haproxy
+-------
+
+apt install haproxy -y
+nano /etc/haproxy/haproxy.cfg
+systemctl restart 
+hostname -I
+
+# /usr/lib/systemd/system/haproxy.service;

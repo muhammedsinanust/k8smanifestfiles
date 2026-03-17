@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recruitment-config-map
+  namespace: sinan-ns
+data:
+  NODE_ENV: production
+  PORT: "3000"
+  MONGO_URI: mongodb://rootuser:rootpassword@mongo-svc:27017/hr_system?authSource=admin
+  DB_NAME: hr_system
+  MONGO_USERNAME: rootuser
+  MONGO_PASSWORD: rootpassword
+  DEFAULT_ADMIN_ID: project
+  DEFAULT_ADMIN_PASSWORD: project123
+  LOG_LEVEL: info
