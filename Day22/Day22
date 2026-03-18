@@ -37,7 +37,7 @@ haproxy
 
 apt install haproxy -y
 nano /etc/haproxy/haproxy.cfg
-systemctl restart 
+systemctl restart haproxy
 hostname -I
 
 # /usr/lib/systemd/system/haproxy.service;
