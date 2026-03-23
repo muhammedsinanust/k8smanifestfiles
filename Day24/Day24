@@ -1,0 +1,48 @@
+What is api gateway, 
+what is gateway api,
+what is the difference,
+what is http route,
+if ur application deployed in a cluster, and using ClusterIP service, how to expose the application to internet
+
+
+API Gateway
+----------
+An API Gateway is a server that acts as a single entry point for clients to access multiple backend services.
+
+1️⃣ Request Routing
+Sends requests to the correct microservice.
+2️⃣ Authentication & Authorization
+Verifies user identity (e.g., JWT tokens, OAuth).
+3️⃣ Rate Limiting
+Prevents abuse by limiting how many requests a client can make.
+4️⃣ Load Balancing
+Distributes traffic across multiple instances of a service.
+5️⃣ Caching
+Stores responses temporarily to reduce backend load.
+6️⃣ Logging & Monitoring
+Tracks request data for analytics and debugging
+
+Popular API Gateway Tools
+🔹 Amazon API Gateway - Managed service from AWS for building and managing APIs.
+🔹 Kong - Open-source and enterprise API gateway.
+🔹 NGINX - Often used as a lightweight API gateway or reverse proxy.
+🔹 Apigee - Google’s API management platform.
+
+
+Gateway API
+-----------
+A Gateway API is just an API exposed through an API Gateway / set of endpoints clients use through that gateway
+
+The Kubernetes Gateway API is a modern way to manage how traffic enters and moves inside a Kubernetes cluster. It replaces and improves the older Ingress system.
+
+Feature	        Gateway API	    Ingress
+Design	        Modular	        Monolithic
+Protocols	    HTTP, TCP, gRPC	Mostly HTTP
+Role separation	Yes	            No
+Flexibility	    High	        Limited
+
+Kubernetes Gateway API is a next-generation traffic routing system that gives you fine-grained, scalable, and role-based control over how requests reach your applications.
+
+HTTPRoute
+---------
+HTTPRoute is a resource that defines how HTTP/HTTPS requests are routed to backend services inside your Kubernetes cluster.

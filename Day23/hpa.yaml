@@ -17,4 +17,17 @@ spec:
       target:
         type: Utilization
         averageUtilization: 5
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+    scaleDown:
+      stabilizationWindowSeconds: 3
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
   
