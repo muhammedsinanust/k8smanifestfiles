@@ -1,0 +1,34 @@
+Day26
+-----
+
+Kubernetes Volumes
+------------------
+
+Empty Directory
+Host-Path
+Static Provisioning
+Dynamic Provisioning
+
+
+etcd config - /etc/kubernetes/manifests/
+data of etcd - /var/lib/etcd/
+stores pod logs - /var/log/pods
+stores cont logs - /var/log/containers
+
+Elastic Block Store (EBS)
+Network File System (NFS)
+
+ls -a /var/lib/kubelet/pods/e6d196b8-f33b-4438-a3f0-0aac9d2d2edc/volumes/
+------------------------------------
+# spec:
+#   template:
+#     spec:
+#         volumeMounts:
+#         - name: mongodb-storage
+#           mountPath: /data/db
+#       volumes:
+#         - name: mongodb-storage
+#           emptyDir:
+#             sizeLimit: "512Mi"
+------------------------------------
+ls -a /var/lib/kubelet/pods/3cb0049f-859a-4586-bf6c-9dba213cc729/volumes/kubernetes.io~empty-dir/mongodb-storage/
