@@ -4,12 +4,10 @@ metadata:
   name: mysql-deployment
 spec:
   replicas: 3
-  strategy:
+  updateStrategy:
     type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
   minReadySeconds: 10
+  serviceName: mariadb
   selector:
     matchLabels:
       app: mysql
@@ -36,12 +34,12 @@ spec:
               memory: "1Gi"
               cpu: "500m"
           volumeMounts:
-            - name: mysql-storage
+            - name: mysql-vct
               mountPath: /var/lib/mysql
       terminationGracePeriodSeconds: 10
       volumeClaimTemplates:
         - metadata:
-            name: mysql-storage
+            name: mysql-vct
           spec:
             accessModes:
               - ReadWriteMany
