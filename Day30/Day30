@@ -1,0 +1,15 @@
+Whithout clusterIP inside the cluster how are we going to communicate or distribute traffic to the pods
+What is pod DNS, where can we find the DNS
+How headless service related to the statefulsets, what is the need for it
+
+pods are ephemeral, Without ClusterIP Pods must call individual pod IPs
+No automatic traffic distribution, Clients must manage pod discovery manually
+
+Every service/pod gets a DNS name from CoreDNS, DNS runs inside cluster as pods in kube-system
+Pods automatically use DNS via: /etc/resolv.conf
+DNS server IP comes from: kube-dns / CoreDNS service (ClusterIP)
+
+A Headless Service = Service without ClusterIP
+StatefulSet pods need stable identity
+Each pod gets its own DNS name
+No load balancing — direct pod access
