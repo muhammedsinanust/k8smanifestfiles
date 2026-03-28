@@ -37,16 +37,15 @@ spec:
             - name: mysql-vct
               mountPath: /var/lib/mysql
       terminationGracePeriodSeconds: 10
-      volumeClaimTemplates:
-        - metadata:
-            name: mysql-vct
-          spec:
-            accessModes:
-              - ReadWriteMany
-            storageClassName: nfs-csi
-            resources:
-              requests:
-                storage: 1Gi
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-vct
+    spec:
+      accessModes: ["ReadWriteMany"]
+      storageClassName: nfs-csi
+      resources:
+        requests:
+          storage: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -58,5 +57,4 @@ spec:
   ports:
     - port: 3306
       targetPort: 3306
-  type:
-    ClusterIP: None
+  ClusterIP: None
