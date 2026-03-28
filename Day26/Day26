@@ -15,8 +15,12 @@ data of etcd - /var/lib/etcd/
 stores pod logs - /var/log/pods
 stores cont logs - /var/log/containers
 
-Elastic Block Store (EBS)
-Network File System (NFS)
+Elastic Block Store (EBS) - persistent storage that remains available even if the instance stops or terminates.
+                            virtual hard drive for Amazon EC2 instances.
+                            localized to a specific Availability Zone (AZ)
+                            operating systems, file systems, application data, and database files (Block level data)
+Network File System (NFS) - distributed file system protocol protocol allowing users to access remote files over a network as if they were local.
+
 
 ls -a /var/lib/kubelet/pods/e6d196b8-f33b-4438-a3f0-0aac9d2d2edc/volumes/
 ------------------------------------
@@ -32,3 +36,6 @@ ls -a /var/lib/kubelet/pods/e6d196b8-f33b-4438-a3f0-0aac9d2d2edc/volumes/
 #             sizeLimit: "512Mi"
 ------------------------------------
 ls -a /var/lib/kubelet/pods/3cb0049f-859a-4586-bf6c-9dba213cc729/volumes/kubernetes.io~empty-dir/mongodb-storage/
+
+
+HostPath - mounts a file or directory from the host node's filesystem directly into a pod

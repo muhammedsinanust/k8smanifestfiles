@@ -1,0 +1,22 @@
+Day27
+-----
+
+CSI - Standard for exposing arbitrary block and file storage systems to containerized workloads on Container Orchestration Systems (COs) 
+    - Using CSI, third-party storage providers can write and deploy plugins exposing new storage systems in Kubernetes without ever having to touch the core Kubernetes code.
+
+how pv will bind with pvc
+what are the components will come together to bring the external storage inside cluster on pv
+how this pv works inside the cluster
+how pvc will mount with the pod and who is playing this role
+
+ubuntu@ip-172-31-1-190:~$ sudo su
+root@ip-172-31-1-190:/home/ubuntu# vi /etc/haproxy/haproxy.cfg
+root@ip-172-31-1-190:/home/ubuntu# systemctl restart haproxy
+root@ip-172-31-1-190:/home/ubuntu# mkdir /var/nfs/retail
+root@ip-172-31-1-190:/home/ubuntu# ls -la /var/nfs/retail
+total 8
+drwxr-xr-x 2 root root 4096 Mar 25 10:43 .
+drwxr-xr-x 4 root root 4096 Mar 25 10:43 ..
+root@ip-172-31-1-190:/home/ubuntu# chown nobody:nogroup /var/nfs/retail
+root@ip-172-31-1-190:/home/ubuntu# nano /etc/exports
+root@ip-172-31-1-190:/home/ubuntu# systemctl restart nfs-kernel-server

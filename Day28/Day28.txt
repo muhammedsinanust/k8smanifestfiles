@@ -1,0 +1,31 @@
+container - process on host machine
+process - execution of a program
+docker run -d nginx
+docker ps
+ps -ef
+ps -ef | grep c851250f6011
+root       31514       1  0 04:28 ?        00:00:00 /usr/bin/containerd-shim-runc-v2 -namespace moby -id c851250f60110d2e70fc0116faaa4322cb137174465b33a9580c699a29e1673e -address /run/containerd/containerd.sock
+root       33381   29816  0 04:31 pts/1    00:00:00 grep --color=auto c851250f6011
+
+** /usr/bin/containerd-shim-runc-v2
+
+namespaces - User, Netwoer, IPC-Inter-Process Communication, Process, Cgroup, mount
+-- psudo isolation (fake isolation) - processes inside container also run in the host machine
+Process 1 - Kernal process
+
+Cgroups - controls resource allocation and manages everything
+
+after we create container the container will communicate directly to kernal not demon
+
+docker version
+systemctl status
+
+Eventual consistancy - noSQL - we ll get old data wn it eventually comes to consistancy
+
+Networking
+----------
+
+networkIP     BroadcastIP   Represent
+192.168.1.0 - 192.168.1.63  192.168.1.0/26
+
+docker0 - 172.17.0.1
