@@ -13,3 +13,5 @@ A Headless Service = Service without ClusterIP
 StatefulSet pods need stable identity
 Each pod gets its own DNS name
 No load balancing — direct pod access
+
+EndpointSliceController will assign the new IP to the old pod DNS name
