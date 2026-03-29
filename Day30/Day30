@@ -15,3 +15,32 @@ Each pod gets its own DNS name
 No load balancing — direct pod access
 
 EndpointSliceController will assign the new IP to the old pod DNS name
+
+? before routing traffic to a pod why do we need to check health of the pod
+? in a pod how are you going to check health, which protocol we have to use , which request what response we have to get to tell the container is healthy
+? what are the varius paths we are using to check the health of the container
+
+
+Kubernetes Probes
+-----------------
+Readiness Probe - Controls when traffic is allowed, If this fails → pod removed from Service endpoints
+Liveness Probe - Checks if app is alive, If fails → Kubernetes restarts pod
+Startup Probe - Used for slow starting apps (like DB, JVM) Prevents premature restarts
+
+Protocols
+---------
+HTTP probe (most common) - Kubernetes sends an HTTP request to your container. 200–399 → healthy ✅
+TCP probe (basic connectivity) - Kubernetes just checks port is open. Connection success → healthy ✅
+Exec probe (run command inside container) - Kubernetes runs a command inside container. Exit code 0 → healthy ✅
+
+Common health check paths
+-------------------------
+/health → generic health check ✅
+/healthz → Kubernetes-style health check
+/ready → readiness check
+/readyz → readiness (K8s convention)
+/live → liveness check
+/livez → liveness (K8s convention)
+/status → app status
+/ping → simple alive check
+/metrics → sometimes used (Prometheus + health)
