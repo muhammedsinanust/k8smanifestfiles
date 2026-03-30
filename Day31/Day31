@@ -1,0 +1,11 @@
+Day31
+-----
+
+helm
+    chart.yaml
+    templates/
+    values.yaml
+
+1. how to use the conditional statements and loops in a helm chart when you are going to plan for a releas of an application 
+2. how you are going to validate that wheather there is an a yaml file existed or not before you are going to load the yaml
+3. when you are executing the cammand helm install inwhich order all the helm files are gonna execute and who is responsible for it
