@@ -38,3 +38,25 @@ If you set the `storageclass.kubernetes.io/is-default-class` annotation to `true
 
 > [!NOTE]
 > Try to have only one default StorageClass in your cluster. Multiple default StorageClasses is to allow for seamless migration.
+
+If you create a PersistentVolumeClaim without specifying a storageClassName, even when no default StorageClass exists. the new PVC creates as you defined it, and the storageClassName remains unset until a default becomes available.
+
+when a default StorageClass becomes available, the control plane identifies existing PVCs without storageClassName. (empty value for storageClassName or do not have this key) the control plane then updates those PVCs to the new default StorageClass.
+If you have an existing PVC where the storageClassName is "", and you configure a default StorageClass, then this PVC will not get updated.
+
+## Provisioner
+
+Each StorageClass has a provisioner that determines what volume plugin is used for provisioning PVs.
+
+| Volume Plugin | Internal Provisioner | Config Example |
+| --- | --- | --- |
+| AzureFile | ✓ | Azure File |
+| CephFS | - | - |
+| FC | - | - |
+| FlexVolume | - | - |
+| iSCSI | - | - |
+| Local | - | Local |
+| NFS | - | NFS |
+| PortworxVolume | ✓ | Portworx Volume |
+| RBD | - | Ceph RBD |
+| VsphereVolume | ✓ | vSphere |
