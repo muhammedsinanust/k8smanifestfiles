@@ -1,0 +1,69 @@
+1. when you execute the kubectl command how the cluster authenticate the cluster
+2. what is mean by context in Kubernetes. how is playing cruicial role when coming to authentication and authorisation?
+3. what is mean by certificates, key in kubernetes, where we can find all the certificates in master node
+4. what is OIDC how we are giving to cluster if it is on premesis cluster how we maintain the OIDC othentication
+5. if i have 10 devolepers how we provide the cluster access to each and everyone
+6. what is role, role binding, cluster, cluster binding
+
+
+
+### RBAC
+-----------------------------------------
+# create key
+openssl genrsa -out raj.key 2048
+# create csr
+openssl req -new -key raj.key -out raj.csr -subj "/CN=raj/O=dev-team"
+# sign csr using kubernetes CA / create crt
+# ( CertificateSigningRequest )
+openssl x509 -req -in raj.csr \
+ -CA /etc/kubernetes/pki/ca.crt \
+ -CAkey /etc/kubernetes/pki/ca.key \
+ -CAcreateserial \
+ -out raj.crt -days 365
+# see the certificate
+openssl x509 -in raj.crt -text -noout
+# create config for user
+kubectl config set-credentials raj \
+ --client-certificate=raj.crt \
+ --client-key=raj.key
+# set context for user
+kubectl config set-context raj-context \
+ --cluster=kubernetes \
+ --user=raj
+# see the config file
+cat $HOME/.kube/config
+# switch context to user context
+kubectl config use-context raj-context
+-------------------------------------------
+# ls -l | grep raj
+-rw-r--r--  1 root root 1009 Apr  2 09:22 raj.crt
+-rw-r--r--  1 root root  907 Apr  2 09:18 raj.csr
+-rw-------  1 root root 1704 Apr  2 09:13 raj.key
+
+
+---------
+## Apr 3
+---------
+# see binded role
+kubectl get role -n team3-ns
+kubectl get rolebinding -n team3-ns
+
+kubectl config use-context raj-context
+kubectl get ns
+
+# task //
+create a group - dev-group, test-group
+users - murali,mohan,asad,danika,astosh - dev
+users - likitha,pavithra - test
+assign permission to group 
+dev - pods,deployments
+test - svc
+
+
+---
+for u in murali mohan asad danika astosh; do openssl genrsa -out $u.key 2048; openssl req -new -key $u.key -out $u.csr -subj "/CN=$u/O=developer"; sudo openssl x509 -req -in $u.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out $u.crt -days 365; kubectl config set-credentials $u --client-certificate=$u.crt --client-key=$u.key; kubectl config set-context $u-context --cluster=kubernetes --user=$u; done
+---
+
+dynamic storage provisoning volumes
+storage class, y v dont reqire pv
+how to config nfs server, realtime implementation
