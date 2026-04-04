@@ -32,11 +32,10 @@ spec:
         #     topologyKey: topology.kubernetes.io/zone
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - nginx
-              topologyKey: kubernetes.io/hostname
+            labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - nginx
+            topologyKey: kubernetes.io/hostname
