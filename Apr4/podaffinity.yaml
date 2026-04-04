@@ -21,16 +21,7 @@ spec:
         ports:
         - containerPort: 80
       affinity:
-        # podAffinity:
-        #   requiredDuringSchedulingIgnoredDuringExecution:
-        #   - labelSelector:
-        #       matchExpressions:
-        #       - key: security
-        #         operator: In
-        #         values:
-        #         - S1
-        #     topologyKey: topology.kubernetes.io/zone
-        podAntiAffinity:
+        podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
               matchExpressions:
@@ -38,4 +29,13 @@ spec:
                 operator: In
                 values:
                 - nginx
-            topologyKey: kubernetes.io/hostname
+            topologyKey: topology.kubernetes.io/node
+        # podAntiAffinity:
+        #   requiredDuringSchedulingIgnoredDuringExecution:
+        #   - labelSelector:
+        #       matchExpressions:
+        #       - key: app
+        #         operator: In
+        #         values:
+        #         - nginx
+        #     topologyKey: kubernetes.io/hostname
