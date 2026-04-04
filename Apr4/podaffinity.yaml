@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-na-req-deployment
+  name: nginx-pa-req-deployment
   namespace: team3-ns
   labels:
     app: nginx
@@ -39,4 +39,4 @@ spec:
                   operator: In
                   values:
                   - nginx
-              topologyKey: topology.kubernetes.io/zone
+              topologyKey: kubernetes.io/hostname
