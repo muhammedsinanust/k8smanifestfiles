@@ -28,7 +28,7 @@ spec:
               - key: training
                 operator: In
                 values:
-                - test
+                - devops
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 1
             preference:
