@@ -32,7 +32,7 @@ spec:
         #     topologyKey: topology.kubernetes.io/zone
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
-            labelSelector:
+          - labelSelector:
               matchExpressions:
               - key: app
                 operator: In
