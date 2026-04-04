@@ -60,3 +60,4 @@ Each StorageClass has a provisioner that determines what volume plugin is used f
 | PortworxVolume | ✓ | Portworx Volume |
 | RBD | - | Ceph RBD |
 | VsphereVolume | ✓ | vSphere |
+
