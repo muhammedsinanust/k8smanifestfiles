@@ -280,3 +280,6 @@ spec:
   - name: nginx
     image: nginx
 ```
+
+`Error from server (Forbidden): error when creating "label.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [require-resource-limits] Container nginx must have resource limits
+[require-team-label] Missing required label: team`
