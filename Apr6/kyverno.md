@@ -26,3 +26,35 @@ spec:
 ```
 
 `kubectl create deployment nginx --image=nginx`
+
+`error: failed to create deployment: admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy require-labels failed: label 'team' is required`
+
+## Mutate team bravo
+
+```yaml
+apiVersion: policies.kyverno.io/v1alpha1
+kind: MutatingPolicy
+metadata:
+  name: add-labels
+spec:
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations: ['CREATE', 'UPDATE']
+        resources: ['pods']
+  matchConditions:
+    - name: team-label-missing
+      expression: '!has(object.metadata.labels) || !has(object.metadata.labels.team)'
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >
+          Object{
+            metadata: Object.metadata{
+              labels: Object.metadata.labels{
+                team: "bravo"
+              }
+            }
+          }
+```
