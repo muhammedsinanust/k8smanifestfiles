@@ -105,7 +105,7 @@ spec:
 `Error from server (Forbidden): error when creating "testconstraint.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [require-resource-limits] Container nginx must have resource limits
 [disallow-latest] Using latest tag is not allowed`
 
-## for label precents
+## for min replicas
 
 ```yaml
 apiVersion: templates.gatekeeper.sh/v1beta1
@@ -145,6 +145,70 @@ metadata:
   name: fail-both-policies
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: fail-app
+  template:
+    metadata:
+      labels:
+        app: fail-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```
+
+`Error from server (Forbidden): error when creating "minreplicas.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [enforce-min-replicas] Deployment must have at least 2 replicas, found 1`
+
+## for rollingupdates
+
+```yaml
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8srollingupdate
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRollingUpdate
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srollingupdate
+
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Deployment"
+          not input.review.object.spec.strategy.type
+          msg := "Deployment must define a strategy"
+        }
+
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Deployment"
+          input.review.object.spec.strategy.type != "RollingUpdate"
+          msg := "Only RollingUpdate strategy is allowed"
+        }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRollingUpdate
+metadata:
+  name: enforce-rolling-update
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fail-both-policies
+spec:
+  replicas: 3
   strategy:
     type: Recreate
   selector:
