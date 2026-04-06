@@ -225,3 +225,58 @@ spec:
         ports:
         - containerPort: 80
 ```
+
+`Error from server (Forbidden): error when creating "rollingupdate.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [enforce-rolling-update] Only RollingUpdate strategy is allowed`
+
+## for label presence
+
+```yaml
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredlabels
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredLabels
+      validation:
+        openAPIV3Schema:
+          properties:
+            labels:
+              type: array
+              items:
+                type: string
+  targets:
+  - target: admission.k8s.gatekeeper.sh
+    rego: |
+      package k8srequiredlabels
+ 
+      violation[{"msg": msg}] {
+        required := input.parameters.labels[_]
+        not input.review.object.metadata.labels[required]
+        msg := sprintf("Missing required label: %v", [required])
+      }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: require-team-label
+spec:
+  match:
+    kinds:
+    - apiGroups: [""]
+      kinds: ["Pod"]
+  parameters:
+    labels:
+      - team
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+```
