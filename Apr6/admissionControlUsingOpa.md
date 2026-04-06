@@ -58,3 +58,106 @@ spec:
 ```
 
 `Error from server (Forbidden): error when creating "testconstraint.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [require-resource-limits] Container nginx must have resource limits`
+
+## for latest image tag
+
+```yaml
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sdisallowlatest
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sDisallowLatest
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sdisallowlatest
+ 
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          endswith(container.image, ":latest")
+          msg := "Using latest tag is not allowed"
+        }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDisallowLatest
+metadata:
+  name: disallow-latest
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+`Error from server (Forbidden): error when creating "testconstraint.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [require-resource-limits] Container nginx must have resource limits
+[disallow-latest] Using latest tag is not allowed`
+
+## for label precents
+
+```yaml
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sminreplicas
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sMinReplicas
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sminreplicas
+
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Deployment"
+          replicas := input.review.object.spec.replicas
+          replicas < 2
+          msg := sprintf("Deployment must have at least 2 replicas, found %v", [replicas])
+        }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sMinReplicas
+metadata:
+  name: enforce-min-replicas
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fail-both-policies
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: fail-app
+  template:
+    metadata:
+      labels:
+        app: fail-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```

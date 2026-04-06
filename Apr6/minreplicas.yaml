@@ -1,0 +1,52 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8sminreplicas
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sMinReplicas
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sminreplicas
+
+        violation[{"msg": msg}] {
+          input.review.object.kind == "Deployment"
+          replicas := input.review.object.spec.replicas
+          replicas < 2
+          msg := sprintf("Deployment must have at least 2 replicas, found %v", [replicas])
+        }
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sMinReplicas
+metadata:
+  name: enforce-min-replicas
+spec:
+  match:
+    kinds:
+      - apiGroups: ["apps"]
+        kinds: ["Deployment"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fail-both-policies
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: fail-app
+  template:
+    metadata:
+      labels:
+        app: fail-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
