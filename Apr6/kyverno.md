@@ -58,3 +58,10 @@ spec:
             }
           }
 ```
+
+`kubectl run redis --image redis`
+
+`kubectl get pod redis --show-labels`
+
+NAME    READY   STATUS    RESTARTS   AGE   LABELS
+redis   1/1     Running   0          10s   run=redis,team=bravo
