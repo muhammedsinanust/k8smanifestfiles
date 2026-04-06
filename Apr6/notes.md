@@ -23,8 +23,8 @@ Tolerations allow scheduling but don't guarantee scheduling: the scheduler also 
 
 Taints and tolerations work together to ensure that pods are not scheduled onto inappropriate nodes.
 
-add taint to node `kubectl taint nodes node1 key1=value1:NoSchedule`
-remove taint `kubectl taint nodes node1 key1=value1:NoSchedule-`
+- add taint to node `kubectl taint nodes node1 key1=value1:NoSchedule`
+- remove taint `kubectl taint nodes node1 key1=value1:NoSchedule-`
 
 ```yaml
 apiVersion: v1

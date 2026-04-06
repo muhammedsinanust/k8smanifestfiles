@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-ssd-deployment
+  name: nginx-tolerated-deployment
   namespace: team3-ns
   labels:
     app: nginx
