@@ -11,6 +11,7 @@ The implementation of dynamic volume provisioning is based on the API object Sto
 
 ## StorageClass
 
+- A StorageClass defines how storage is dynamically provisioned.
 - Volume plugin (aka provisioner) that provisions a volume.
 - Set of parameters to pass to that provisioner when provisioning.
 
@@ -21,15 +22,27 @@ A cluster administrator can define and expose multiple flavors of storage within
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
+  name: fast
+provisioner: kubernetes.io/gce-pd
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+parameters:
+  type: pd-ssd
+```
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
   name: low-latency
   annotations:
-    storageclass.kubernetes.io/is-default-class: "false"
-provisioner: csi-driver.example-vendor.example
-reclaimPolicy: Retain # default value is Delete
+    storageclass.kubernetes.io/is-default-class: "false" # to make this SC default
+provisioner: csi-driver.example-vendor.example # nfs.csi.aws.com
+reclaimPolicy: Retain # default value is Delete (What happens after PVC deletion)
 allowVolumeExpansion: true
 mountOptions:
   - discard # this might enable UNMAP / TRIM at the block storage layer
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: WaitForFirstConsumer # default value is Immediate
 parameters:
   guaranteedReadWriteLatency: "true" # provider-specific
 ```
@@ -61,3 +74,106 @@ Each StorageClass has a provisioner that determines what volume plugin is used f
 | RBD | - | Ceph RBD |
 | VsphereVolume | ✓ | vSphere |
 
+### Real-world Examples
+
+AWS → EBS CSI
+Azure → Disk CSI
+On-prem → NFS / Ceph
+
+## PVC
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fast
+  resources:
+    requests:
+      storage: 30Gi
+```
+
+## NFS server configuration
+
+Network File System is a shared storage across nodes
+
+```sh
+# Install NFS Server
+sudo apt update
+sudo apt install nfs-kernel-server -y
+
+# Create Shared Directory
+sudo mkdir -p /mnt/nfs-share
+sudo chown nobody:nogroup /mnt/nfs-share
+
+# Configure Export
+sudo nano /etc/exports
+# Add - /mnt/nfs-share *(rw,sync,no_subtree_check)
+
+# Apply configuration
+sudo exportfs -a
+sudo systemctl restart nfs-kernel-server
+
+# Verify
+sudo systemctl status nfs-kernel-server
+```
+
+Kubernetes StorageClass for NFS
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-sc
+provisioner: example.com/external-nfs
+parameters:
+  server: <nfs-server-ip>
+  path: /mnt/nfs-share
+```
+
+> [!NOTE]
+> Kubernetes does NOT provide internal NFS provisioner
+> Must use NFS CSI driver OR External provisioner
+
+## Real-Time Implementation
+
+### 1. Create StorageClass
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+```
+
+### 2. Create PVC
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+### 3. Use in Deployment
+
+```yaml
+volumes:
+  - name: app-storage
+    persistentVolumeClaim:
+      claimName: app-pvc
+```
+
+`PVC created` → `StorageClass identified` → `Provisioner called` → `PV created dynamically` → `PV bound to PVC` → `Pod uses volume`
