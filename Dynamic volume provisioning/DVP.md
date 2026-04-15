@@ -106,12 +106,15 @@ sudo apt update
 sudo apt install nfs-kernel-server -y
 
 # Create Shared Directory
-sudo mkdir -p /mnt/nfs-share
-sudo chown nobody:nogroup /mnt/nfs-share
+sudo mkdir -p /mnt/nfs
+sudo chown nobody:nogroup /mnt/nfs
+sudo chmod 777 /mnt/nfs
 
 # Configure Export
 sudo nano /etc/exports
-# Add - /mnt/nfs-share *(rw,sync,no_subtree_check)
+# Add - /mnt/nfs *(rw,sync,no_subtree_check)
+# for Single IP: /mnt/nfs 192.168.1.10(rw,sync,no_subtree_check)
+# Example Subnet: /mnt/nfs 192.168.1.0/24(rw,sync,no_subtree_check)
 
 # Apply configuration
 sudo exportfs -a
@@ -121,6 +124,14 @@ sudo systemctl restart nfs-kernel-server
 sudo systemctl status nfs-kernel-server
 ```
 
+### NFS Client Configuration
+
+To enable NFS support on a client system, enter the following command at the terminal prompt:
+
+```sh
+sudo apt install nfs-common
+```
+
 Kubernetes StorageClass for NFS
 
 ```yaml
@@ -128,10 +139,13 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: nfs-sc
-provisioner: example.com/external-nfs
+  namespace: default
+provisioner: example.com/external-nfs # nfs.csi.k8s.io
 parameters:
   server: <nfs-server-ip>
-  path: /mnt/nfs-share
+  path: /mnt/nfs
+reclaimPolicy:  Delete
+volumeBindingMode:  Immediate
 ```
 
 > [!NOTE]
@@ -177,3 +191,9 @@ volumes:
 ```
 
 `PVC created` → `StorageClass identified` → `Provisioner called` → `PV created dynamically` → `PV bound to PVC` → `Pod uses volume`
+
+```sh
+curl -skSL https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/install-driver.sh | bash -s master --
+```
+
+![csi-nfs-resources](image.png)
